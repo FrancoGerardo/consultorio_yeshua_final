@@ -26,6 +26,14 @@ function realizarBusqueda() {
     }
 }
 
+function enlaceMenu(ruta) {
+    return ruta && ruta !== '#' ? route(ruta) : '#';
+}
+
+function menuActivo(ruta) {
+    return ruta && ruta !== '#' && route().current(ruta + '.*');
+}
+
 // Logs para depuración del menú
 onMounted(() => {
     console.log('🔍 [AppLayout] Menú recibido desde backend:', pagina.props.menu);
@@ -95,8 +103,8 @@ const logout = () => {
                                 <template v-for="item in $page.props.menu" :key="item.id">
                                     <div v-if="item.items_hijos && item.items_hijos.length > 0" class="relative group flex items-center">
                                 <NavLink 
-                                            :href="item.ruta !== '#' ? route(item.ruta) : '#'" 
-                                            :active="item.ruta !== '#' && route().current(item.ruta + '.*')"
+                                            :href="enlaceMenu(item.ruta)" 
+                                            :active="menuActivo(item.ruta)"
                                             class="cursor-pointer"
                                         >
                                             {{ item.nombre }}
@@ -107,10 +115,10 @@ const logout = () => {
                                                 <Link 
                                                     v-for="hijo in item.items_hijos" 
                                                     :key="hijo.id"
-                                                    :href="route(hijo.ruta)" 
+                                                    :href="enlaceMenu(hijo.ruta)" 
                                                     :class="[
                                                         'block px-4 py-2 text-sm transition duration-150 ease-in-out',
-                                                        route().current(hijo.ruta + '.*') 
+                                                        menuActivo(hijo.ruta)
                                                             ? 'bg-indigo-50 text-indigo-700 font-medium' 
                                                             : 'text-gray-700 hover:bg-gray-100'
                                                     ]"
@@ -122,8 +130,8 @@ const logout = () => {
                                     </div>
                                 <NavLink 
                                         v-else
-                                        :href="item.ruta !== '#' ? route(item.ruta) : '#'" 
-                                        :active="item.ruta !== '#' && route().current(item.ruta + '.*')"
+                                        :href="enlaceMenu(item.ruta)" 
+                                        :active="menuActivo(item.ruta)"
                                 >
                                         {{ item.nombre }}
                                 </NavLink>
@@ -270,8 +278,8 @@ const logout = () => {
                     <div class="pt-2 pb-3 space-y-1">
                         <template v-for="item in $page.props.menu" :key="item.id">
                         <ResponsiveNavLink 
-                                :href="item.ruta !== '#' ? route(item.ruta) : '#'" 
-                                :active="item.ruta !== '#' && route().current(item.ruta + '.*')"
+                                :href="enlaceMenu(item.ruta)" 
+                                :active="menuActivo(item.ruta)"
                         >
                                 {{ item.nombre }}
                         </ResponsiveNavLink>
@@ -279,8 +287,8 @@ const logout = () => {
                         <ResponsiveNavLink 
                                     v-for="hijo in item.items_hijos" 
                                     :key="hijo.id"
-                                    :href="route(hijo.ruta)" 
-                                    :active="route().current(hijo.ruta + '.*')"
+                                    :href="enlaceMenu(hijo.ruta)" 
+                                    :active="menuActivo(hijo.ruta)"
                                     class="pl-8"
                                 >
                                     {{ hijo.nombre }}

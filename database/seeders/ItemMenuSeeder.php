@@ -66,6 +66,11 @@ class ItemMenuSeeder extends Seeder
             if (str_starts_with($nombrePermiso, 'ver-') || str_starts_with($nombrePermiso, 'gestionar-')) {
                 // Extraer el nombre del recurso (ej: "ver-roles" -> "roles")
                 $recurso = str_replace(['ver-', 'gestionar-'], '', $nombrePermiso);
+
+                // Pagos tiene submenú propio más abajo
+                if (strtolower($recurso) === 'pagos') {
+                    continue;
+                }
                 
                 // Generar nombre amigable (ej: "roles" -> "Roles", "especialidades" -> "Especialidades")
                 // Convertir "historiales-clinicos" -> "Historiales Clinicos" -> "Historiales Clinicos"

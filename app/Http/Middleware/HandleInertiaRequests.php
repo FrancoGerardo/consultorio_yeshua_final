@@ -181,6 +181,20 @@ class HandleInertiaRequests extends Middleware
                         return $item;
                     })->values();
 
+                    // Seguridad: ningún ítem del menú debe quedar con ruta # sin hijos
+                    $itemsMenu = $itemsMenu->map(function ($item) {
+                        $hijos = $item['items_hijos'] ?? [];
+                        if (($item['ruta'] ?? '') !== '#' || count($hijos) > 0) {
+                            return $item;
+                        }
+
+                        if (($item['nombre'] ?? '') === 'Pagos') {
+                            return array_merge($item, ['ruta' => 'pagos.index']);
+                        }
+
+                        return $item;
+                    })->values();
+
                     // Médico: sin acceso a módulo de pagos (solo consultorio / clínica)
                     if ($usuario->hasRole('Medico') && ! $usuario->hasAnyRole(['Administrador', 'Secretaria'])) {
                         $itemsMenu = $itemsMenu->filter(function ($item) {

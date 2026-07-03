@@ -165,6 +165,9 @@ class DatabaseSeeder extends Seeder
             'mostrar-usuarios',
             'ver-historiales-clinicos',
             'mostrar-historiales-clinicos',
+            'gestionar-pagos',
+            'ver-pagos',
+            'mostrar-pagos',
         ])->get();
         
         $rolSecretaria->syncPermissions($permisosSecretaria);
@@ -668,6 +671,9 @@ class DatabaseSeeder extends Seeder
 
         // Llamar al seeder de items de menú
         $this->call(ItemMenuSeeder::class);
+
+        // Asegurar permisos de pagos en roles (idempotente)
+        $this->call(SincronizarPermisosPagosSeeder::class);
 
         // Llamar al seeder de configuración de pagos
         $this->call(ConfiguracionPagoSeeder::class);
