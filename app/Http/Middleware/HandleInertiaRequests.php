@@ -162,19 +162,24 @@ class HandleInertiaRequests extends Middleware
                         }
                     }
 
-                    // Secretaría: Pagos como enlace directo (vista consultorio), sin submenú "Mis Pagos"
-                    if ($usuario->hasRole('Secretaria') && ! $usuario->hasRole('Administrador')) {
-                        $itemsMenu = $itemsMenu->map(function ($item) {
-                            if (($item['nombre'] ?? '') !== 'Pagos') {
-                                return $item;
-                            }
+                    // Pagos: enlace directo si no hay submenú visible o es staff (no cliente)
+                    $itemsMenu = $itemsMenu->map(function ($item) use ($usuario) {
+                        if (($item['nombre'] ?? '') !== 'Pagos') {
+                            return $item;
+                        }
 
+                        $hijos = $item['items_hijos'] ?? [];
+                        $esCliente = $usuario->hasRole('Cliente') && ! $usuario->hasAnyRole(['Administrador', 'Secretaria']);
+
+                        if (count($hijos) === 0 || ((! $esCliente) && $usuario->hasAnyRole(['Administrador', 'Secretaria']))) {
                             return array_merge($item, [
                                 'ruta' => 'pagos.index',
-                                'items_hijos' => [],
+                                'items_hijos' => $esCliente ? $hijos : [],
                             ]);
-                        })->values();
-                    }
+                        }
+
+                        return $item;
+                    })->values();
 
                     // Médico: sin acceso a módulo de pagos (solo consultorio / clínica)
                     if ($usuario->hasRole('Medico') && ! $usuario->hasAnyRole(['Administrador', 'Secretaria'])) {

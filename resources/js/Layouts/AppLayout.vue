@@ -122,8 +122,8 @@ const logout = () => {
                                     </div>
                                 <NavLink 
                                         v-else
-                                        :href="route(item.ruta)" 
-                                        :active="route().current(item.ruta + '.*')"
+                                        :href="item.ruta !== '#' ? route(item.ruta) : '#'" 
+                                        :active="item.ruta !== '#' && route().current(item.ruta + '.*')"
                                 >
                                         {{ item.nombre }}
                                 </NavLink>

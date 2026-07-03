@@ -101,6 +101,14 @@ class DatabaseSeeder extends Seeder
         Permission::firstOrCreate(['name' => 'eliminar-reportes']);
         Permission::firstOrCreate(['name' => 'mostrar-reportes']);
 
+        // Crear permisos para Pagos
+        Permission::firstOrCreate(['name' => 'gestionar-pagos']);
+        Permission::firstOrCreate(['name' => 'ver-pagos']);
+        Permission::firstOrCreate(['name' => 'crear-pagos']);
+        Permission::firstOrCreate(['name' => 'editar-pagos']);
+        Permission::firstOrCreate(['name' => 'eliminar-pagos']);
+        Permission::firstOrCreate(['name' => 'mostrar-pagos']);
+
         // Crear rol Administrador
         $rolAdministrador = Role::firstOrCreate(['name' => 'Administrador']);
 
