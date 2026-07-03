@@ -146,6 +146,7 @@ Route::middleware([
     Route::get('/fichas/{fichaId}/pago/procesar', [PagoClienteController::class, 'procesarPago'])->name('fichas.pago.procesar');
     Route::post('/fichas/pago/efectivo', [PagoClienteController::class, 'registrarPagoEfectivo'])->name('fichas.pago.efectivo');
     Route::post('/fichas/pago/generar-qr', [PagoClienteController::class, 'generarQr'])->name('fichas.pago.generar-qr');
+    Route::post('/fichas/pago/cancelar-pendiente', [PagoClienteController::class, 'cancelarPagoPendiente'])->name('fichas.pago.cancelar-pendiente');
     Route::get('/fichas/pago/{id}/estado', [PagoClienteController::class, 'obtenerEstadoPorId'])->name('fichas.pago.estado-por-id');
     Route::get('/fichas/{id}', [FichaController::class, 'mostrarFicha'])->name('fichas.show');
     Route::get('/fichas/{id}/editar', [FichaController::class, 'editarFicha'])->name('fichas.edit');
@@ -222,6 +223,7 @@ Route::middleware([
         Route::get('/pagos/seleccionar-plan/{fichaId}', [PagoClienteController::class, 'seleccionarPlanPago'])->name('pagos.seleccionar-plan');
         Route::get('/pagos/procesar/{fichaId}', [PagoClienteController::class, 'procesarPago'])->name('pagos.procesar');
         Route::post('/pagos/generar-qr', [PagoClienteController::class, 'generarQr'])->name('pagos.generar-qr');
+        Route::post('/pagos/cancelar-pendiente', [PagoClienteController::class, 'cancelarPagoPendiente'])->name('pagos.cancelar-pendiente');
         Route::post('/pagos/efectivo', [PagoClienteController::class, 'registrarPagoEfectivo'])->name('pagos.efectivo');
         Route::post('/pagos/procesar-tarjeta', [PagoClienteController::class, 'procesarTarjeta'])->name('pagos.procesar-tarjeta');
         Route::get('/pagos/consultar-estado', [PagoClienteController::class, 'consultarEstado'])->name('pagos.consultar-estado');

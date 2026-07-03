@@ -43,6 +43,9 @@ const rutaEstadoPago = computed(() => (
 const rutaListadoFichas = computed(() => (
     props.contextoStaff ? 'fichas.index' : 'cliente.fichas.index'
 ));
+const rutaCancelarPendiente = computed(() => (
+    props.contextoStaff ? 'fichas.pago.cancelar-pendiente' : 'cliente.pagos.cancelar-pendiente'
+));
 
 // Formulario para pago efectivo
 const formularioEfectivo = useForm({
@@ -189,6 +192,48 @@ async function consultarEstadoPago() {
     }
 }
 
+function detenerConsulta() {
+    if (intervaloConsulta.value) {
+        clearInterval(intervaloConsulta.value);
+        intervaloConsulta.value = null;
+    }
+}
+
+function hayPagoPendienteActivo() {
+    return Boolean(pagoId.value || props.pagoPendiente?.id || mostrandoQR.value);
+}
+
+function anularPagoPendiente(alTerminar) {
+    if (!hayPagoPendienteActivo()) {
+        alTerminar();
+        return;
+    }
+
+    router.post(route(rutaCancelarPendiente.value), {
+        ficha_id: props.ficha.id,
+    }, {
+        preserveScroll: true,
+        onFinish: () => alTerminar(),
+    });
+}
+
+function volverAMetodosPago() {
+    detenerConsulta();
+    anularPagoPendiente(() => {
+        mostrandoQR.value = false;
+        qrData.value = null;
+        pagoId.value = null;
+        metodoSeleccionado.value = null;
+    });
+}
+
+function volverAFichas() {
+    detenerConsulta();
+    anularPagoPendiente(() => {
+        router.visit(route(rutaListadoFichas.value));
+    });
+}
+
 function procesarPagoEfectivo() {
     formularioEfectivo.post(route(rutaPagoEfectivo.value), {
         preserveScroll: true,
@@ -218,9 +263,7 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-    if (intervaloConsulta.value) {
-        clearInterval(intervaloConsulta.value);
-    }
+    detenerConsulta();
 });
 </script>
 
@@ -348,7 +391,7 @@ onUnmounted(() => {
                         </div>
                     </div>
 
-                    <button @click="mostrandoQR = false; qrData = null"
+                    <button @click="volverAMetodosPago"
                             class="mt-6 w-full px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition">
                         ← Volver a métodos de pago
                     </button>
@@ -385,7 +428,7 @@ onUnmounted(() => {
 
                 <!-- Botón Volver -->
                 <div class="text-center">
-                    <button @click="$inertia.visit(route('cliente.fichas.index'))"
+                    <button @click="volverAFichas"
                             class="px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition">
                         ← Volver a Mis Fichas
                     </button>

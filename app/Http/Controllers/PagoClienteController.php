@@ -282,6 +282,38 @@ class PagoClienteController extends Controller
     }
 
     /**
+     * Anular pagos QR pendientes al volver atrás sin completar el pago.
+     */
+    public function cancelarPagoPendiente(Request $request)
+    {
+        $request->validate([
+            'ficha_id' => 'required|string|exists:fichas,id',
+        ]);
+
+        $ficha = Ficha::findOrFail($request->ficha_id);
+        $this->autorizarAccesoPagoFicha($ficha);
+
+        $pagosPendientes = $ficha->pagos()
+            ->where('estado', 'PENDIENTE')
+            ->where('metodo_pago', 'QR')
+            ->get();
+
+        foreach ($pagosPendientes as $pago) {
+            $pago->update([
+                'estado' => 'ANULADO',
+                'qr_status' => 'CANCELLED',
+            ]);
+        }
+
+        Log::info('🚫 [Pago] Pagos QR pendientes anulados al volver', [
+            'ficha_id' => $ficha->id,
+            'cantidad' => $pagosPendientes->count(),
+        ]);
+
+        return redirect()->back();
+    }
+
+    /**
      * Registrar pago en efectivo (NUEVO)
      */
     public function registrarPagoEfectivo(Request $request)
